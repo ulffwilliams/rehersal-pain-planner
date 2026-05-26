@@ -16,7 +16,6 @@ export function InsightCard({ insight, day, highlighted }: InsightCardProps) {
         highlighted ? 'bg-yellow-300' : 'bg-white'
       }`}
     >
-      <span className="text-2xl shrink-0">{insight.emoji}</span>
       <div className="flex-1 min-w-0">
         <p className="font-bold text-sm">{insight.label}</p>
         {day && <p className="text-xs text-gray-600 mt-0.5">Snitt: {day.avg.toFixed(1)}</p>}
