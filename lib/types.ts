@@ -37,5 +37,4 @@ export interface InsightItem {
   dayOfWeek: number;
   classification: string;
   label: string;
-  emoji: string;
 }

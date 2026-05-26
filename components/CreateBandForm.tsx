@@ -1,6 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+const BAND_NAMES = [
+  'Kallsup', 'Svart Ridå', 'Agitator', 'Nektar', 'Anal Nektar', 'Stiint',
+  'Staaf', 'Diset', 'Poloklubben', 'Corduroy', 'Agent Blå', 'Westkust',
+  'Makthaverskan', 'TOMMA INTET', 'Klotter', 'Hök', 'Duschpalatset',
+  'Fotosken', 'Rest Evergreen', 'Beverly Kills', 'Svart katt', 'Tivoli 14',
+  'crescenterna', 'Dödskällan', 'CIVIL POLIS', 'theHANDS', 'Svindel',
+  'Väster-Ut', 'Klas Bas', 'Bromma Disco', 'Terra', 'Gula Gången', 'Skärrad Big Band'
+];
 
 export function CreateBandForm() {
   const [bandName, setBandName] = useState("");
@@ -9,6 +18,11 @@ export function CreateBandForm() {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [namePlaceholder, setNamePlaceholder] = useState("T.ex. Fredagsgänget");
+
+  useEffect(() => {
+    setNamePlaceholder(`T.ex. ${BAND_NAMES[Math.floor(Math.random() * BAND_NAMES.length)]}`);
+  }, []);
 
   const addMember = () => setMembers((prev) => [...prev, ""]);
 
@@ -56,7 +70,8 @@ export function CreateBandForm() {
     return (
       <div>
         <h2 className="text-xl font-black mb-2">Länken är klar!</h2>
-        <p className="font-bold mb-4">Skicka den här länken till alla!</p>
+        <p className="font-bold ">Skicka den här länken till alla!</p>
+        <p className="mb-4">(och gå sedan in på den själv)</p>
         <div className="border-2 border-black bg-yellow-100 p-3 font-mono text-sm break-all mb-4">
           {createdLink}
         </div>
@@ -64,7 +79,7 @@ export function CreateBandForm() {
           onClick={handleCopy}
           className="w-full border-2 border-black bg-yellow-300 shadow-[4px_4px_0_black] p-4 font-black text-lg hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
         >
-          {copied ? "✅ Kopierat!" : "Kopiera länk"}
+          {copied ? " Kopierat!" : "Kopiera länk"}
         </button>
       </div>
     );
@@ -78,7 +93,7 @@ export function CreateBandForm() {
           type="text"
           value={bandName}
           onChange={(e) => setBandName(e.target.value)}
-          placeholder="T.ex. Fredagsgänget"
+          placeholder={namePlaceholder}
           className="w-full border-2 border-black p-3 font-bold text-lg bg-white focus:outline-none focus:ring-2 focus:ring-yellow-300"
           required
         />
@@ -115,7 +130,11 @@ export function CreateBandForm() {
 
       <button
         type="submit"
-        disabled={loading || !bandName.trim() || members.filter((m) => m.trim()).length < 2}
+        disabled={
+          loading ||
+          !bandName.trim() ||
+          members.filter((m) => m.trim()).length < 2
+        }
         className="border-2 border-black bg-yellow-300 shadow-[6px_6px_0_black] p-4 font-black text-xl hover:shadow-none hover:translate-x-[6px] hover:translate-y-[6px] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? "Skapar..." : "Generera länk"}
