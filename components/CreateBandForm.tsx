@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 const BAND_NAMES = [
-  'Kallsup', 'Svart Ridå', 'Agitator', 'Nektar', 'Anal Nektar', 'Stiint',
+  'Kallsup', 'Svart Ridå', 'Agitator', 'Nektar', 'Anal Nektar', 'Stint',
   'Staaf', 'Diset', 'Poloklubben', 'Corduroy', 'Agent Blå', 'Westkust',
   'Makthaverskan', 'TOMMA INTET', 'Klotter', 'Hök', 'Duschpalatset',
   'Fotosken', 'Rest Evergreen', 'Beverly Kills', 'Svart katt', 'Tivoli 14',
