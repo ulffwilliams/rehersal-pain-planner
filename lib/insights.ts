@@ -1,6 +1,6 @@
 import type { DaySummary, InsightItem } from './types';
 
-export const DAY_NAMES = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag', 'Söndag'];
+export const DAY_NAMES = ['Måndagar', 'Tisdagar', 'Onsdagar', 'Torsdagar', 'Fredagar', 'Lördagar', 'Söndagar'];
 
 export function classifyDay(summary: { avg: number; max: number }): string {
   if (summary.max === 6) return 'blocked';
