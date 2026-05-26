@@ -5,8 +5,8 @@ import './globals.css';
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' });
 
 export const metadata: Metadata = {
-  title: 'Rehearsal Planner',
-  description: 'Ta reda på när hela bandet kan repa',
+  title: 'Dagkollen',
+  description: 'Ta reda på vilken dag som passar alla',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

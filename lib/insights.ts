@@ -14,11 +14,11 @@ export function classifyDay(summary: { avg: number; max: number }): string {
 function classificationToInsight(classification: string, dayName: string): { label: string; emoji: string } {
   switch (classification) {
     case 'blocked': return { label: `${dayName} fungerar inte — någon kan absolut inte`, emoji: '🚫' };
-    case 'perfect': return { label: `${dayName} är perfekta repdagar`, emoji: '🟢' };
-    case 'great': return { label: `${dayName} funkar bra för bandet`, emoji: '👍' };
+    case 'perfect': return { label: `${dayName} passar alla perfekt`, emoji: '🟢' };
+    case 'great': return { label: `${dayName} funkar bra för alla`, emoji: '👍' };
     case 'okay': return { label: `${dayName} är lite delat`, emoji: '🤷' };
-    case 'tough': return { label: `${dayName} är tuffa — undvik om möjligt`, emoji: '😬' };
-    default: return { label: `${dayName} är dålig repdag`, emoji: '🚫' };
+    case 'tough': return { label: `${dayName} är svårt för många — undvik om möjligt`, emoji: '😬' };
+    default: return { label: `${dayName} är en dålig dag`, emoji: '🚫' };
   }
 }
 

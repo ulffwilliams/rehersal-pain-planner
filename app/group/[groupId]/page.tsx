@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { VotingFlow } from '@/components/VotingFlow';
 import { getGroupWithMembers } from '@/lib/queries';
 
@@ -6,6 +6,7 @@ export default async function GroupPage({ params }: { params: Promise<{ groupId:
   const { groupId } = await params;
   const group = await getGroupWithMembers(groupId);
   if (!group) return notFound();
+  if (group.allVoted) redirect(`/group/${groupId}/stats`);
 
   return (
     <VotingFlow

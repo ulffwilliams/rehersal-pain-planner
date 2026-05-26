@@ -34,7 +34,6 @@ export function VotingFlow({ groupId, groupName, members }: VotingFlowProps) {
   };
 
   const handleScore = (score: number) => setScores(prev => ({ ...prev, [day]: score }));
-
   const handleNext = () => setDay(d => d + 1);
 
   const handleSubmit = async () => {
@@ -75,9 +74,9 @@ export function VotingFlow({ groupId, groupName, members }: VotingFlowProps) {
             >
               <span>{m.nickname}</span>
               {m.hasVoted ? (
-                <span className="text-sm bg-green-400 border-2 border-black px-2 py-1">✅ Röstat klart</span>
+                <span className="text-sm bg-green-400 border-2 border-black px-2 py-1">✅ Svarat</span>
               ) : (
-                <span className="text-sm bg-yellow-300 border-2 border-black px-2 py-1">⏳ Ej röstat</span>
+                <span className="text-sm bg-yellow-300 border-2 border-black px-2 py-1">Ej svarat</span>
               )}
             </button>
           ))}
@@ -103,15 +102,10 @@ export function VotingFlow({ groupId, groupName, members }: VotingFlowProps) {
       </div>
 
       <div className="mb-6">
-        <ProgressBar current={day + 1} total={7} />
+        <ProgressBar current={day} total={7} />
       </div>
 
-      <VotingCard
-        key={day}
-        dayName={DAY_NAMES[day]}
-        selectedScore={currentScore}
-        onSelect={handleScore}
-      />
+      <VotingCard key={day} dayName={DAY_NAMES[day]} selectedScore={currentScore} onSelect={handleScore} />
 
       <div className="mt-4">
         {isLast ? (
@@ -120,7 +114,7 @@ export function VotingFlow({ groupId, groupName, members }: VotingFlowProps) {
             disabled={!currentScore || submitting}
             className="w-full border-2 border-black bg-yellow-300 shadow-[4px_4px_0_black] p-4 font-black text-lg hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {submitting ? 'Skickar...' : 'Skicka mina svar 🎸'}
+            {submitting ? 'Skickar...' : 'Skicka svar'}
           </button>
         ) : (
           <button

@@ -5,12 +5,12 @@ import { PainFace, PAIN_EMOJIS, PAIN_COLORS } from './PainFace';
 import type { DaySummary } from '@/lib/types';
 
 const MOOD: Record<string, string> = {
-  perfect: '🎉 Hela bandet är med!',
-  great: '👍 Det funkar för de flesta',
-  okay: '🤷 Delat — kräver kompromiss',
-  tough: '😬 Svårt för flera i bandet',
-  blocked: '🚫 Dålig repdag',
-  bad: '🚫 Dålig repdag',
+  perfect: 'Det passar alla!',
+  great: 'Det funkar för de flesta',
+  okay: 'Delat — kräver kompromiss',
+  tough: 'Svårt för flera',
+  blocked: 'Dålig dag',
+  bad: 'Dålig dag',
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

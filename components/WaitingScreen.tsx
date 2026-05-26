@@ -47,9 +47,9 @@ export function WaitingScreen({ groupId, groupName, initialMembers }: WaitingScr
       <h1 className="text-3xl font-black mb-6">{groupName}</h1>
 
       <div className="border-2 border-black bg-white shadow-[4px_4px_0_black] p-6 mb-6">
-        <h2 className="text-xl font-black mb-1">Väntar på bandet... 🥁</h2>
+        <h2 className="text-xl font-black mb-1">Väntar på alla... ⏳</h2>
         <p className="font-bold mb-4 text-gray-600">
-          {voted} av {members.length} har röstat
+          {voted} av {members.length} har svarat
         </p>
 
         <div className="flex flex-col gap-2">

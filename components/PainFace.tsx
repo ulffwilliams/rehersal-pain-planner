@@ -1,19 +1,21 @@
 'use client';
 
+import Image from 'next/image';
+
 const FACES = [
-  { emoji: '😄', bg: '#22c55e', label: 'Det fungerar perfekt' },
-  { emoji: '🙂', bg: '#86efac', label: 'Det fungerar bra' },
-  { emoji: '😐', bg: '#fbbf24', label: 'Det går' },
-  { emoji: '😕', bg: '#fb923c', label: 'Det är lite jobbigt' },
-  { emoji: '😢', bg: '#ef4444', label: 'Det är ganska jobbigt' },
-  { emoji: '😭', bg: '#991b1b', label: 'Jag kan absolut inte' },
+  { label: 'Det fungerar perfekt', color: '#22c55e' },
+  { label: 'Det fungerar bra', color: '#86efac' },
+  { label: 'Det går', color: '#fbbf24' },
+  { label: 'Det är lite jobbigt', color: '#fb923c' },
+  { label: 'Det är ganska jobbigt', color: '#ef4444' },
+  { label: 'Jag kan absolut inte', color: '#991b1b' },
 ];
 
-const SIZES: Record<string, { px: number; fontSize: string }> = {
-  sm: { px: 36, fontSize: '1.1rem' },
-  md: { px: 52, fontSize: '1.6rem' },
-  lg: { px: 68, fontSize: '2rem' },
-  xl: { px: 88, fontSize: '2.6rem' },
+const SIZES: Record<string, number> = {
+  sm: 36,
+  md: 52,
+  lg: 68,
+  xl: 88,
 };
 
 interface PainFaceProps {
@@ -25,8 +27,9 @@ interface PainFaceProps {
 }
 
 export function PainFace({ value, size = 'md', selected = false, onClick, showLabel = false }: PainFaceProps) {
-  const face = FACES[Math.max(0, Math.min(5, value - 1))];
-  const dim = SIZES[size];
+  const idx = Math.max(0, Math.min(5, value - 1));
+  const face = FACES[idx];
+  const px = SIZES[size];
 
   return (
     <div
@@ -35,20 +38,25 @@ export function PainFace({ value, size = 'md', selected = false, onClick, showLa
     >
       <div
         style={{
-          width: dim.px,
-          height: dim.px,
-          backgroundColor: face.bg,
-          fontSize: dim.fontSize,
+          width: px,
+          height: px,
           border: selected ? '3px solid black' : '2px solid black',
           boxShadow: selected ? '3px 3px 0 black' : '2px 2px 0 black',
           transform: selected ? 'scale(1.12)' : 'scale(1)',
           transition: 'transform 0.12s ease, box-shadow 0.12s ease',
+          borderRadius: '50%',
+          overflow: 'hidden',
+          backgroundColor: face.color,
         }}
-        className={`rounded-full flex items-center justify-center ${
-          onClick ? 'hover:scale-110' : ''
-        }`}
+        className={onClick ? 'hover:scale-110' : ''}
       >
-        {face.emoji}
+        <Image
+          src={`/${value}.png`}
+          alt={face.label}
+          width={px}
+          height={px}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        />
       </div>
       {showLabel && (
         <span className="text-xs font-bold text-center max-w-[80px] leading-tight">{face.label}</span>
@@ -58,5 +66,5 @@ export function PainFace({ value, size = 'md', selected = false, onClick, showLa
 }
 
 export const PAIN_LABELS = FACES.map(f => f.label);
-export const PAIN_EMOJIS = FACES.map(f => f.emoji);
-export const PAIN_COLORS = FACES.map(f => f.bg);
+export const PAIN_EMOJIS = ['😄', '🙂', '😐', '😕', '😢', '😭'];
+export const PAIN_COLORS = FACES.map(f => f.color);
