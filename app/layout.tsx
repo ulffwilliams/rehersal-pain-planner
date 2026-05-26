@@ -7,6 +7,7 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 export const metadata: Metadata = {
   title: "Reptisdag",
   description: "Ta reda på vilken dag som passar alla",
+  robots: { index: false, follow: false },
 };
 
 export default function RootLayout({
