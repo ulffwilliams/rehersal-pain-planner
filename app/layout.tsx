@@ -1,18 +1,24 @@
-import type { Metadata } from 'next';
-import { Geist } from 'next/font/google';
-import './globals.css';
+import type { Metadata } from "next";
+import { Geist } from "next/font/google";
+import "./globals.css";
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-geist' });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 
 export const metadata: Metadata = {
-  title: 'Dagkollen',
-  description: 'Ta reda på vilken dag som passar alla',
+  title: "Reptisdag",
+  description: "Ta reda på vilken dag som passar alla",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="sv" className={geist.variable}>
-      <body style={{ fontFamily: 'var(--font-geist), Arial, sans-serif' }}>{children}</body>
+      <body style={{ fontFamily: "var(--font-geist), Arial, sans-serif" }}>
+        {children}
+      </body>
     </html>
   );
 }
