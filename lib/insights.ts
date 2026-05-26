@@ -11,22 +11,22 @@ export function classifyDay(summary: { avg: number; max: number }): string {
   return 'bad';
 }
 
-function classificationToInsight(classification: string, dayName: string): { label: string; emoji: string } {
+function classificationToInsight(classification: string, dayName: string): { label: string;} {
   switch (classification) {
-    case 'blocked': return { label: `${dayName} fungerar inte — någon kan absolut inte`, emoji: '🚫' };
-    case 'perfect': return { label: `${dayName} passar alla perfekt`, emoji: '🟢' };
-    case 'great': return { label: `${dayName} funkar bra för alla`, emoji: '👍' };
-    case 'okay': return { label: `${dayName} är lite delat`, emoji: '🤷' };
-    case 'tough': return { label: `${dayName} är svårt för många — undvik om möjligt`, emoji: '😬' };
-    default: return { label: `${dayName} är en dålig dag`, emoji: '🚫' };
+    case 'blocked': return { label: `${dayName} fungerar inte — någon kan absolut inte` };
+    case 'perfect': return { label: `${dayName} passar alla perfekt`};
+    case 'great': return { label: `${dayName} funkar bra för alla`};
+    case 'okay': return { label: `${dayName} är lite delat`};
+    case 'tough': return { label: `${dayName} är svårt för många — undvik om möjligt`};
+    default: return { label: `${dayName} är en dålig dag`};
   }
 }
 
 export function generateInsights(days: DaySummary[]): InsightItem[] {
   return days.map(day => {
     const dayName = DAY_NAMES[day.dayOfWeek];
-    const { label, emoji } = classificationToInsight(day.classification, dayName);
-    return { dayOfWeek: day.dayOfWeek, classification: day.classification, label, emoji };
+    const { label } = classificationToInsight(day.classification, dayName);
+    return { dayOfWeek: day.dayOfWeek, classification: day.classification, label };
   });
 }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { PainFace, PAIN_EMOJIS, PAIN_COLORS } from './PainFace';
+import { PainFace, PAIN_COLORS } from './PainFace';
 import type { DaySummary } from '@/lib/types';
 
 const MOOD: Record<string, string> = {
@@ -18,9 +18,7 @@ const CustomTick = (props: any) => {
   const { x, y, payload } = props;
   if (!payload) return null;
   return (
-    <text x={x} y={y + 14} textAnchor="middle" fontSize="16">
-      {PAIN_EMOJIS[payload.value - 1]}
-    </text>
+    <image x={x - 12} y={y + 4} width={24} height={24} href={`/${payload.value}.png`} />
   );
 };
 
