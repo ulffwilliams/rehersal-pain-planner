@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { PainFace } from './PainFace';
 import { InsightCard } from './InsightCard';
 import { DayStats } from './DayStats';
-import { DAY_NAMES } from '@/lib/insights';
+import { DAY_NAMES, getDayLabel } from '@/lib/insights';
 import type { StatsData } from '@/lib/types';
 
 interface StatsViewProps {
@@ -17,6 +17,7 @@ export function StatsView({ groupName, stats }: StatsViewProps) {
 
   const best = stats.days[stats.bestDay];
   const worst = stats.days[stats.worstDay];
+  const cd = stats.customDates;
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] p-4 max-w-2xl mx-auto pb-12">
@@ -26,7 +27,7 @@ export function StatsView({ groupName, stats }: StatsViewProps) {
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="border-2 border-black bg-green-400 shadow-[4px_4px_0_black] p-4">
           <p className="text-xs font-black uppercase mb-1">Bästa dagen</p>
-          <p className="font-black text-lg">{DAY_NAMES[best.dayOfWeek]}</p>
+          <p className="font-black text-lg">{getDayLabel(best.dayOfWeek, cd)}</p>
           <div className="flex items-center gap-2 mt-2">
             <PainFace value={Math.max(1, Math.min(6, Math.round(best.avg)))} size="md" />
             <span className="font-black text-xl">{best.avg.toFixed(1)}</span>
@@ -34,7 +35,7 @@ export function StatsView({ groupName, stats }: StatsViewProps) {
         </div>
         <div className="border-2 border-black bg-red-300 shadow-[4px_4px_0_black] p-4">
           <p className="text-xs font-black uppercase mb-1">Sämsta dagen</p>
-          <p className="font-black text-lg">{DAY_NAMES[worst.dayOfWeek]}</p>
+          <p className="font-black text-lg">{getDayLabel(worst.dayOfWeek, cd)}</p>
           <div className="flex items-center gap-2 mt-2">
             <PainFace value={Math.max(1, Math.min(6, Math.round(worst.avg)))} size="md" />
             <span className="font-black text-xl">{worst.avg.toFixed(1)}</span>
@@ -55,9 +56,11 @@ export function StatsView({ groupName, stats }: StatsViewProps) {
       </div>
 
       <h3 className="text-lg font-black mb-3">Veckoöversikt</h3>
-      <div className="grid grid-cols-7 gap-1 mb-6">
+      <div className={`grid gap-1 mb-6 ${stats.days.length <= 7 ? 'grid-cols-7' : 'grid-cols-4'}`}>
         {stats.days.map((d, idx) => {
           const avg = Math.max(1, Math.min(6, Math.round(d.avg)));
+          const label = getDayLabel(d.dayOfWeek, cd);
+          const shortLabel = cd ? label.slice(0, 6) : DAY_NAMES[d.dayOfWeek].slice(0, 3);
           return (
             <button
               key={d.dayOfWeek}
@@ -69,7 +72,7 @@ export function StatsView({ groupName, stats }: StatsViewProps) {
               }`}
             >
               <span className="text-[9px] font-black leading-none">
-                {DAY_NAMES[d.dayOfWeek].slice(0, 3)}
+                {shortLabel}
               </span>
               <PainFace value={avg} size="sm" />
               <span className="text-[9px] font-bold">{d.avg.toFixed(1)}</span>
@@ -81,9 +84,9 @@ export function StatsView({ groupName, stats }: StatsViewProps) {
       {stats.days[selectedIdx] && (
         <>
           <h3 className="text-lg font-black mb-3">
-            {DAY_NAMES[stats.days[selectedIdx].dayOfWeek]} — detaljer
+            {getDayLabel(stats.days[selectedIdx].dayOfWeek, cd)} — detaljer
           </h3>
-          <DayStats day={stats.days[selectedIdx]} dayName={DAY_NAMES[stats.days[selectedIdx].dayOfWeek]} />
+          <DayStats day={stats.days[selectedIdx]} dayName={getDayLabel(stats.days[selectedIdx].dayOfWeek, cd)} />
         </>
       )}
 

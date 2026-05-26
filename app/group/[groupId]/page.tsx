@@ -13,6 +13,8 @@ export default async function GroupPage({ params }: { params: Promise<{ groupId:
       groupId={groupId}
       groupName={group.name}
       members={group.members}
+      mode={group.mode}
+      customDates={group.customDates}
     />
   );
 }

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 const BAND_NAMES = [
-  'Kallsup', 'Svart Ridå', 'Agitator', 'Nektar', 'Anal Nektar', 'Stint',
+  'Kallsup', 'Svart Ridå', 'Agitator', 'Nektar', 'Anal Nektar', 'Stiint',
   'Staaf', 'Diset', 'Poloklubben', 'Corduroy', 'Agent Blå', 'Westkust',
   'Makthaverskan', 'TOMMA INTET', 'Klotter', 'Hök', 'Duschpalatset',
   'Fotosken', 'Rest Evergreen', 'Beverly Kills', 'Svart katt', 'Tivoli 14',
@@ -11,9 +11,17 @@ const BAND_NAMES = [
   'Väster-Ut', 'Klas Bas', 'Bromma Disco', 'Terra', 'Gula Gången', 'Skärrad Big Band'
 ];
 
+function formatDateSv(iso: string): string {
+  const d = new Date(iso + 'T12:00:00');
+  return d.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short', weekday: 'short' });
+}
+
 export function CreateBandForm() {
   const [bandName, setBandName] = useState("");
   const [members, setMembers] = useState(["", "", "", ""]);
+  const [mode, setMode] = useState<'weekly' | 'dates'>('weekly');
+  const [customDates, setCustomDates] = useState<string[]>([]);
+  const [dateInput, setDateInput] = useState("");
   const [createdLink, setCreatedLink] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -29,10 +37,20 @@ export function CreateBandForm() {
   const updateMember = (idx: number, value: string) =>
     setMembers((prev) => prev.map((m, i) => (i === idx ? value : m)));
 
+  const addDate = () => {
+    if (!dateInput || customDates.includes(dateInput)) return;
+    setCustomDates(prev => [...prev, dateInput].sort());
+    setDateInput("");
+  };
+
+  const removeDate = (iso: string) =>
+    setCustomDates(prev => prev.filter(d => d !== iso));
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const valid = members.filter((m) => m.trim());
     if (!bandName.trim() || valid.length < 1) return;
+    if (mode === 'dates' && customDates.length < 1) return;
 
     setLoading(true);
     setError(null);
@@ -40,7 +58,12 @@ export function CreateBandForm() {
       const res = await fetch("/api/groups", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: bandName.trim(), members: valid }),
+        body: JSON.stringify({
+          name: bandName.trim(),
+          members: valid,
+          mode,
+          customDates: mode === 'dates' ? customDates : undefined,
+        }),
       });
       const data = await res.json();
       if (!res.ok || !data.id) {
@@ -66,6 +89,12 @@ export function CreateBandForm() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const canSubmit =
+    !loading &&
+    !!bandName.trim() &&
+    members.filter((m) => m.trim()).length >= 2 &&
+    (mode === 'weekly' || customDates.length >= 1);
+
   if (createdLink) {
     return (
       <div>
@@ -87,6 +116,75 @@ export function CreateBandForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <div>
+        <label className="block font-black mb-2">Typ av omröstning</label>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => setMode('weekly')}
+            className={`border-2 border-black p-3 font-black text-sm transition-all ${
+              mode === 'weekly'
+                ? 'bg-yellow-300 shadow-none translate-x-[2px] translate-y-[2px]'
+                : 'bg-white shadow-[2px_2px_0_black] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]'
+            }`}
+          >
+            Veckoplanering
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('dates')}
+            className={`border-2 border-black p-3 font-black text-sm transition-all ${
+              mode === 'dates'
+                ? 'bg-yellow-300 shadow-none translate-x-[2px] translate-y-[2px]'
+                : 'bg-white shadow-[2px_2px_0_black] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]'
+            }`}
+          >
+            Valda datum
+          </button>
+        </div>
+      </div>
+
+      {mode === 'dates' && (
+        <div>
+          <label className="block font-black mb-2">Välj datum</label>
+          <div className="flex gap-2">
+            <input
+              type="date"
+              value={dateInput}
+              onChange={(e) => setDateInput(e.target.value)}
+              className="flex-1 border-2 border-black p-3 font-bold bg-white focus:outline-none focus:ring-2 focus:ring-yellow-300"
+            />
+            <button
+              type="button"
+              onClick={addDate}
+              disabled={!dateInput || customDates.includes(dateInput)}
+              className="border-2 border-black bg-white shadow-[2px_2px_0_black] px-4 py-2 font-bold hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-40"
+            >
+              + Lägg till
+            </button>
+          </div>
+          {customDates.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {customDates.map(iso => (
+                <span
+                  key={iso}
+                  className="border-2 border-black bg-white px-2 py-1 text-sm font-bold flex items-center gap-1"
+                >
+                  {formatDateSv(iso)}
+                  <button
+                    type="button"
+                    onClick={() => removeDate(iso)}
+                    className="ml-1 font-black text-red-600 hover:text-red-800"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       <div>
         <label className="block font-black mb-2">Gruppens namn</label>
         <input
@@ -130,11 +228,7 @@ export function CreateBandForm() {
 
       <button
         type="submit"
-        disabled={
-          loading ||
-          !bandName.trim() ||
-          members.filter((m) => m.trim()).length < 2
-        }
+        disabled={!canSubmit}
         className="border-2 border-black bg-yellow-300 shadow-[6px_6px_0_black] p-4 font-black text-xl hover:shadow-none hover:translate-x-[6px] hover:translate-y-[6px] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? "Skapar..." : "Generera länk"}

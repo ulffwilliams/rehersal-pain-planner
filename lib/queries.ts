@@ -4,15 +4,18 @@ import type { MemberWithStatus, StatsData, DaySummary } from './types';
 
 export async function getGroupWithMembers(groupId: string) {
   const sql = getDb();
-  const rows = await sql`SELECT id, name FROM groups WHERE id = ${groupId}`;
+  const rows = await sql`SELECT id, name, mode, custom_dates FROM groups WHERE id = ${groupId}`;
   const group = rows[0];
   if (!group) return null;
+
+  const customDates: string[] | null = group.custom_dates as string[] | null;
+  const expectedCount = group.mode === 'dates' && customDates ? customDates.length : 7;
 
   const members = await sql`
     SELECT
       m.id,
       m.nickname,
-      (COUNT(r.id) = 7) AS has_voted
+      (COUNT(r.id) = ${expectedCount}) AS has_voted
     FROM members m
     LEFT JOIN responses r ON r.member_id = m.id
     WHERE m.group_id = ${groupId}
@@ -23,6 +26,8 @@ export async function getGroupWithMembers(groupId: string) {
   return {
     id: group.id as string,
     name: group.name as string,
+    mode: (group.mode ?? 'weekly') as 'weekly' | 'dates',
+    customDates: customDates ?? undefined,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     members: members.map((m: any) => ({
       id: m.id as string,
@@ -36,12 +41,20 @@ export async function getGroupWithMembers(groupId: string) {
 
 export async function getGroupStats(groupId: string): Promise<StatsData | null> {
   const sql = getDb();
+
+  const groupRows = await sql`SELECT mode, custom_dates FROM groups WHERE id = ${groupId}`;
+  const group = groupRows[0];
+  if (!group) return null;
+
+  const customDates: string[] | null = group.custom_dates as string[] | null;
+  const expectedCount = group.mode === 'dates' && customDates ? customDates.length : 7;
+
   const notVoted = await sql`
     SELECT m.id FROM members m
     LEFT JOIN responses r ON r.member_id = m.id AND r.group_id = ${groupId}
     WHERE m.group_id = ${groupId}
     GROUP BY m.id
-    HAVING COUNT(r.id) < 7
+    HAVING COUNT(r.id) < ${expectedCount}
   `;
 
   if (notVoted.length > 0) return null;
@@ -96,6 +109,7 @@ export async function getGroupStats(groupId: string): Promise<StatsData | null> 
     days,
     bestDay: findBestDay(days),
     worstDay: findWorstDay(days),
-    insights: generateInsights(days),
+    insights: generateInsights(days, customDates ?? undefined),
+    customDates: customDates ?? undefined,
   };
 }

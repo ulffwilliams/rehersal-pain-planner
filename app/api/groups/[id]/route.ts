@@ -6,14 +6,18 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     const { id } = await params;
 
     const sql = getDb();
-    const groups = await sql`SELECT id, name FROM groups WHERE id = ${id}`;
+    const groups = await sql`SELECT id, name, mode, custom_dates FROM groups WHERE id = ${id}`;
     if (!groups[0]) return NextResponse.json({ error: 'Group not found' }, { status: 404 });
+
+    const group = groups[0];
+    const customDates: string[] | null = group.custom_dates as string[] | null;
+    const expectedCount = group.mode === 'dates' && customDates ? customDates.length : 7;
 
     const members = await sql`
       SELECT
         m.id,
         m.nickname,
-        (COUNT(r.id) = 7) AS has_voted
+        (COUNT(r.id) = ${expectedCount}) AS has_voted
       FROM members m
       LEFT JOIN responses r ON r.member_id = m.id
       WHERE m.group_id = ${id}
@@ -22,8 +26,10 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     `;
 
     return NextResponse.json({
-      id: groups[0].id,
-      name: groups[0].name,
+      id: group.id,
+      name: group.name,
+      mode: group.mode ?? 'weekly',
+      customDates: customDates ?? null,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       members: members.map((m: any) => ({
         id: m.id as string,

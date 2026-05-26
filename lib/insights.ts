@@ -22,9 +22,19 @@ function classificationToInsight(classification: string, dayName: string): { lab
   }
 }
 
-export function generateInsights(days: DaySummary[]): InsightItem[] {
+export function formatCustomDate(iso: string): string {
+  const d = new Date(iso + 'T12:00:00');
+  return d.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' });
+}
+
+export function getDayLabel(dayOfWeek: number, customDates?: string[]): string {
+  if (customDates?.[dayOfWeek]) return formatCustomDate(customDates[dayOfWeek]);
+  return DAY_NAMES[dayOfWeek] ?? `Dag ${dayOfWeek + 1}`;
+}
+
+export function generateInsights(days: DaySummary[], customDates?: string[]): InsightItem[] {
   return days.map(day => {
-    const dayName = DAY_NAMES[day.dayOfWeek];
+    const dayName = getDayLabel(day.dayOfWeek, customDates);
     const { label } = classificationToInsight(day.classification, dayName);
     return { dayOfWeek: day.dayOfWeek, classification: day.classification, label };
   });

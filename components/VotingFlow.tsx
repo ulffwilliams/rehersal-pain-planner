@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import { PainFace } from './PainFace';
 import { VotingCard } from './VotingCard';
 import { ProgressBar } from './ProgressBar';
-
-const DAY_NAMES = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag', 'Söndag'];
+import { DAY_NAMES, getDayLabel } from '@/lib/insights';
 
 interface Member {
   id: string;
@@ -18,14 +17,18 @@ interface VotingFlowProps {
   groupId: string;
   groupName: string;
   members: Member[];
+  mode?: 'weekly' | 'dates';
+  customDates?: string[];
 }
 
-export function VotingFlow({ groupId, groupName, members }: VotingFlowProps) {
+export function VotingFlow({ groupId, groupName, members, mode = 'weekly', customDates }: VotingFlowProps) {
   const router = useRouter();
   const [selected, setSelected] = useState<Member | null>(null);
   const [day, setDay] = useState(0);
   const [scores, setScores] = useState<Record<number, number>>({});
   const [submitting, setSubmitting] = useState(false);
+
+  const totalDays = mode === 'dates' && customDates ? customDates.length : 7;
 
   const handleSelect = (member: Member) => {
     setSelected(member);
@@ -90,7 +93,8 @@ export function VotingFlow({ groupId, groupName, members }: VotingFlowProps) {
   }
 
   const currentScore = scores[day] ?? null;
-  const isLast = day === 6;
+  const isLast = day === totalDays - 1;
+  const dayLabel = getDayLabel(day, mode === 'dates' ? customDates : undefined);
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] p-4 max-w-lg mx-auto">
@@ -102,10 +106,10 @@ export function VotingFlow({ groupId, groupName, members }: VotingFlowProps) {
       </div>
 
       <div className="mb-6">
-        <ProgressBar current={day} total={7} />
+        <ProgressBar current={day} total={totalDays} />
       </div>
 
-      <VotingCard key={day} dayName={DAY_NAMES[day]} selectedScore={currentScore} onSelect={handleScore} />
+      <VotingCard key={day} dayName={dayLabel} selectedScore={currentScore} onSelect={handleScore} />
 
       <div className="mt-4">
         {isLast ? (

@@ -1,6 +1,8 @@
 export interface Group {
   id: string;
   name: string;
+  mode: 'weekly' | 'dates';
+  customDates?: string[];
   created_at: string;
 }
 
@@ -31,6 +33,7 @@ export interface StatsData {
   bestDay: number;
   worstDay: number;
   insights: InsightItem[];
+  customDates?: string[];
 }
 
 export interface InsightItem {
