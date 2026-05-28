@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { PainFace } from './PainFace';
-import { InsightCard } from './InsightCard';
 import { DayStats } from './DayStats';
 import { DAY_NAMES, getDayLabel } from '@/lib/insights';
 import type { StatsData } from '@/lib/types';
@@ -41,18 +40,6 @@ export function StatsView({ groupName, stats }: StatsViewProps) {
             <span className="font-black text-xl">{worst.avg.toFixed(1)}</span>
           </div>
         </div>
-      </div>
-
-      <h3 className="text-lg font-black mb-3">Smarta insikter</h3>
-      <div className="flex flex-col gap-2 mb-6">
-        {stats.insights.map(insight => (
-          <InsightCard
-            key={insight.dayOfWeek}
-            insight={insight}
-            day={stats.days.find(d => d.dayOfWeek === insight.dayOfWeek)}
-            highlighted={insight.dayOfWeek === stats.days[stats.bestDay].dayOfWeek}
-          />
-        ))}
       </div>
 
       <h3 className="text-lg font-black mb-3">Veckoöversikt</h3>
